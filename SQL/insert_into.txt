@@ -1,0 +1,15 @@
+INSERT INTO public.customers (name, email) VALUES
+('Иван', 'ivan@mail.ru'),
+('Петр', 'petr@mail.ru'),
+('Василий', 'vasily@mail.ru');
+
+INSERT INTO public.orders (customer_id) VALUES
+(1), (2), (2), (3);
+
+INSERT INTO public.order_items (order_id, product_name, quantity, price) VALUES
+(1, 'Шорты', 1, 500.0),
+(1, 'Мопед', 1, 12000.0),
+(2, 'Набор посуды', 1, 2000.0),
+(3, 'Вилка одноразовая(5 шт)', 5, 20.0),
+(4, 'Доширак', 7, 70.0),
+(4, 'Чай(20п.)', 1, 112.0);

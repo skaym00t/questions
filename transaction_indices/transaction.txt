@@ -1,0 +1,29 @@
+BEGIN;
+
+-- Создаем заказ и возвращаем его ID
+WITH new_order AS (
+    INSERT INTO orders (customer_id, order_date)
+    VALUES (1, CURRENT_DATE)
+    RETURNING id
+)
+-- Вставляем позиции заказа
+INSERT INTO order_items (order_id, product_name, quantity, price)
+SELECT
+    new_order.id,
+    items.product_name,
+    items.quantity::INTEGER,
+    items.price::DECIMAL(10,2)
+FROM new_order
+CROSS JOIN (VALUES
+    ('Товар 1', 1, 100.00),
+    ('Товар 2', 2, 200.00),
+    ('Товар 3', 3, 300.00)
+) AS items (product_name, quantity, price);
+
+COMMIT;
+
+# ПРОВЕРКА
+
+SELECT * FROM order_items
+ORDER BY order_id DESC
+LIMIT 3

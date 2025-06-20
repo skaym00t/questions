@@ -1,0 +1,29 @@
+CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+
+CREATE INDEX idx_order_items_order_id_price ON order_items(order_id, price);
+
+CREATE INDEX idx_order_items_product_name ON order_items(product_name);
+
+EXPLAIN ANALYZE SELECT product_name FROM order_items
+WHERE order_id = 123 AND price > 10000
+
+"Bitmap Heap Scan on order_items  (cost=4.53..43.69 rows=10 width=18) (actual time=0.034..0.046 rows=8 loops=1)"
+"  Recheck Cond: ((order_id = 123) AND (price > '10000'::numeric))"
+"  Heap Blocks: exact=8"
+"  ->  Bitmap Index Scan on idx_order_items_order_id_price  (cost=0.00..4.52 rows=10 width=0) (actual time=0.020..0.020 rows=8 loops=1)"
+"        Index Cond: ((order_id = 123) AND (price > '10000'::numeric))"
+"Planning Time: 0.103 ms"
+"Execution Time: 0.061 ms"
+
+EXPLAIN ANALYZE SELECT * FROM orders
+WHERE customer_id = 1
+
+"Bitmap Heap Scan on orders  (cost=4.37..40.42 rows=10 width=12) (actual time=0.029..0.035 rows=6 loops=1)"
+"  Recheck Cond: (customer_id = 1)"
+"  Heap Blocks: exact=6"
+"  ->  Bitmap Index Scan on idx_orders_customer_id  (cost=0.00..4.37 rows=10 width=0) (actual time=0.020..0.020 rows=6 loops=1)"
+"        Index Cond: (customer_id = 1)"
+"Planning Time: 0.072 ms"
+"Execution Time: 0.050 ms"
+
+В ОБОИХ СЛУЧАЯХ ИСПОЛЬЗОВАНИЕ ИНДЕКСОВ ПРИВОДИТ К УСКОРЕНИЮ ВЫПОЛНЕНИЯ ЗАПРОСОВ

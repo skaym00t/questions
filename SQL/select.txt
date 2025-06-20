@@ -1,0 +1,18 @@
+SELECT orders.id, orders.order_date FROM orders
+JOIN customers ON
+orders.customer_id = customers.id
+WHERE customers.name = 'Иван Иванов';
+
+SELECT product_name, quantity, price FROM order_items
+JOIN orders ON
+orders.id = order_items.order_id
+WHERE order_items.order_id = 1
+ORDER BY price DESC;
+
+SELECT customers.name, SUM(order_items.quantity * order_items.price) AS total_spent FROM order_items
+JOIN orders ON
+order_items.order_id = orders.id
+JOIN customers ON
+orders.customer_id = customers.id
+GROUP BY customers.name
+HAVING SUM(order_items.quantity * order_items.price) > 5000;
