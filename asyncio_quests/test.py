@@ -130,20 +130,13 @@ class Value:
         self.v = v
 
     def __hash__(self):
-        # Простая самописная функция хэша с использованием ord
-        if isinstance(self.v, str):
-            hash_value = 0
-            for char in self.v:
-                hash_value = (hash_value * 31 + ord(char)) % (2 ** 32)
-            return hash_value
-        else:
-            # Для чисел преобразуем в строку и вычисляем хэш
+        # Универсальная функция хэша для строк и чисел
+        str_value = str(self.v) if not isinstance(self.v, str) else self.v
+        hash_value = 0
+        for char in str_value:
+            hash_value = (hash_value * 31 + ord(char)) % (2 ** 32)
+        return hash_value
             # ord возвращает unicode символа
-            str_v = str(self.v)
-            hash_value = 0
-            for char in str_v:
-                hash_value = (hash_value * 31 + ord(char)) % (2 ** 32)
-            return hash_value
 
     def __eq__(self, other):
         if isinstance(other, Value):
@@ -175,10 +168,10 @@ def log_execution_time_and_result(func):
             execution_time = time.perf_counter() - start_time
 
             # Лог для бизнеса на INFO - только время выполнения
-            logger.info("Function %s executed in %.4f seconds", func.__name__, execution_time)
+            logger.info("Функция %s выполнена за %.4f секунд", func.__name__, execution_time)
 
             # Лог для разработчиков на DEBUG - детальная информация
-            logger.debug("Function %s took %.4fs. Arguments: %s, Keyword arguments: %s. Return: %s",
+            logger.debug("Функция %s выполнена за %.4f сек. Аргументы: %s, Именованные аргументы: %s. Результат: %s",
                          func.__name__, execution_time, args, kwargs, result)
 
             return result
@@ -186,7 +179,7 @@ def log_execution_time_and_result(func):
         except Exception as e:
             execution_time = time.perf_counter() - start_time
             # Лог ошибок на ERROR уровне
-            logger.error("Function %s failed in %.4fs. Error: %s",
+            logger.error("Функция %s завершилась ошибкой за %.4f сек. Ошибка: %s",
                          func.__name__, execution_time, str(e))
             raise
 
